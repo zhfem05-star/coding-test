@@ -4,7 +4,7 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 
 MAIN_TEMPLATE = '''import sys
-input = sys.stdin.readline
+sys.stdin = open("./input.txt", "r")
 
 
 def main():
