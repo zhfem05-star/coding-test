@@ -3,7 +3,7 @@ Args:
     test_case_n(str): 테스트 케이스 개수
     n(str): 배열의 세로 크기
     m(str): 배열의 가로 크기
-    list_(list(str)): 2차원 리스트(바코드)
+    list_(list(str)): 2차원 리스트(바코드) 근데 그냥 1차원 리스트로 쓰는 것이 맞는 듯 함
 
 Returns:
     answer(int): 잘못된 암호면 0, 아니면 해당 배열을 모두 합한 값
@@ -65,6 +65,11 @@ Returns:
     
     else:
         return 0
+
+회고:
+    문제를 이해하는데 오래 걸리고, 이미지가 무엇을 의미하는지 몰랐던 것이 큼 -> 여기서 오해 시작
+    rfind를 쓰는 것이라는 것은 알았는데 어떤 클래스의 메서드인지 미쳐 몰랐어서 형 변환 꼬임
+    -> 이로 인해 코드를 다시 싹 지우고 시작
 """
 import sys
 sys.stdin = open("./input.txt", "r")
@@ -83,21 +88,34 @@ def main(list_origin: list, m: int) -> int:
         "0110111" : 8,
         "0001011" : 9
     }
-    
+    list_ = list_origin[:]
+    list_str = [] # 구한 7bit 문자들 리스트
+    stack_ = ""
+    # 범위 체크 로직
+    for i in list_: # list_에서 원소들 받기
+        if "1" in i:
+            i_idx = i.rfind("1") # 이거 str 메서드라 형 변환 필요
+            a = i[i_idx - 55:i_idx + 1]
+            for j in a:
+                stack_ += j
+                if len(stack_) == 7:
+                    list_str.append(dict_7bit["".join(stack_)])
+                    stack_ = ""
+            break
     # check 로직
-    print(f"list_str: {list_str}")
+    # print(f"list_str: {list_str}")
     list_int = list(map(int, list_str))
-    print(list_int)
+    # print(list_int)
     list_int_jjack = 0
     list_int_hol = 0
 
-    for x in range(0, 8, 2):
-        list_int_hol += list_int[x]
-
-    for y in range(1, 8, 2):
-        list_int_jjack += list_int[y]
-
-    if (list_int_jjack * 3 + list_int_hol) % 10 == 0:
+    for x in range(len(list_int)):
+        if (x+1) % 2 != 0: # 홀수 계산
+            list_int_hol += list_int[x]
+        else: # 짝수 계산
+            list_int_jjack += list_int[x]
+    
+    if (list_int_hol * 3 + list_int_jjack) % 10 == 0:
         return sum(list_int)
     
     else:
@@ -110,5 +128,5 @@ for test_case in range(1, T + 1):
     a, b = input().split()
     a = int(a) # 세로 길이
     b = int(b) # 가로 길이
-    list_ = [list(input()) for i in range(a)]
-    print(f"{test_case} {a} {b} {main(list_, b)}")
+    list_ = [input() for i in range(a)]
+    print(f"#{test_case} {main(list_, a)}")
