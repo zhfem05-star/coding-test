@@ -57,12 +57,12 @@ def main(list_: list) -> int:
     list_selo = [0] * 100
     cnt = 0
     set_ = set()
-    for i in range(len(list_)):
+    for i in range(len(list_)): # 가로 계산 + 대각선 계산. 시간복잡도 O(N)
         set_.add(sum(list_[i]))
         daegak_1 += list_[i][i]
         daegak_2 += list_[i][-(i+1)]
 
-    for j in range(len(list_selo)):
+    for j in range(len(list_selo)): # 세로 계산. 시간복잡도 O(N^2) 하지만 그래봤자 100 * 100 이라 괜찮음
         for x in range(len(list_)):
             list_selo[j] += list_[x][j]
             cnt += 1
