@@ -44,8 +44,8 @@ answer = 0
     deque 자체가 슬라이스를 지원 안 하는줄 모름.. 애초에 itertools에서 isslice 쓰면 되긴 하지만
     deque는 양끝 탐색을 빠르게 한다는 구조 설계로 인해 구현은 가능하지만 최대한 양끝에만 쓰게 설계된 셈
     그래서 슬라이드를 따로 지원하지 않으니 isslice를 사용 or 그냥 리스트로 구현 방향으로 감
-    그리고 map이나 reversed는 razy evaluation이라고, 인스턴스로 만들거나 자료 구조로 감싸지 않으면
-    실행되지 않음. 그냥 해당 함수의 위치만 참조함
+    그리고 map이나 reversed는 razy evaluation이라고, __next__ 메서드가 실행되지 않으면 그냥 map 객체의 주소만 보여줌.
+    그냥 해당 함수의 위치만 참조함
 """
 
 import sys
