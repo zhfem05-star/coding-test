@@ -18,9 +18,8 @@ Returns:
     가로 세로로 찾기
 
 가정:
-    for문으로 가로 한 번 탐색
-    2중 for문으로 세로문자열 탐색
-    이러면 괜찮을 듯
+    for문으로 가로 한 번 탐색(행 내려가기 1번, 리스트 탐색 1번)
+    2중 for문으로 세로문자열 탐색(열 탐색 1번 행 내려가기1 번)
     회문 체크는 deque에 넣고 슬라이딩 윈도우로 매번 체크하는 방식
 
 의사코드:
@@ -38,20 +37,72 @@ answer = 0
 # 귀찮음 이슈 + 넉넉한 제약사항
     for i in range(8):
         for j in range(8 - len_hm): # 가로 탐색
-            if list_[i][j:j+len_hm] == list_[i][j:j+len_hm, -1]:
+            if list_[i][j:j+len_hm] == list_[i][j:j+len_hm:-1]:
                 answer += 1
 
+회고:
+    deque 자체가 슬라이스를 지원 안 하는줄 모름.. 애초에 itertools에서 isslice 쓰면 되긴 하지만
+    deque는 양끝 탐색을 빠르게 한다는 구조 설계로 인해 구현은 가능하지만 최대한 양끝에만 쓰게 설계된 셈
+    그래서 슬라이드를 따로 지원하지 않으니 isslice를 사용 or 그냥 리스트로 구현 방향으로 감
+    그리고 map이나 reversed는 razy evaluation이라고, 인스턴스로 만들거나 자료 구조로 감싸지 않으면
+    실행되지 않음. 그냥 해당 함수의 위치만 참조함
 """
 
 import sys
 sys.stdin = open("./input.txt", "r")
 
+from collections import deque
 
-def main():
-    pass
+def main(len_hm: int, list_: list) -> int:
+    """_summary_
 
-T = int(input())
-# 여러개의 테스트 케이스가 주어지므로, 각각을 처리합니다.
-for test_case in range(1, T + 1):
-    pass
+    Args:
+        len_hm (int): 회문의 길이
+        list_ (list(list(int))): 2차원 리스트
+
+    Returns:
+        int: _description_
+    """
+    deque_ = [] # 슬라이딩 윈도우 하려 했는데 그냥 매번 배열 갱신하기로함
+    # 귀찮음 이슈 + 넉넉한 제약사항
+    answer = 0
+
+    for i in range(8): # 가로 탐색 행 탐색
+        for j in range(8 - (len_hm - 1)): # 열 탐색
+            # print(list_[i][j:j+len_hm])
+            # print(list(reversed(list_[i][j:j+len_hm])))
+            if list_[i][j:j+(len_hm)] == list(reversed(list_[i][j:j+(len_hm)])):
+                # print(list_[i][j:j+len_hm])
+                answer += 1
+    # 테스트1 결과 가로 탐색: 7개
     
+    for i in range(8): # 세로 탐색. 열 탐색
+        deque_ = []
+        for j in range(8): # 행 탐색
+            deque_.append(list_[j][i])
+            # print(deque_)
+            if len(deque_) == len_hm:
+                if deque_ == list(reversed(deque_)):
+                    # print(list(deque_))
+                    answer += 1
+                    deque_.pop(0)
+                else:
+                    deque_.pop(0)
+    
+    return answer
+
+# 여러개의 테스트 케이스가 주어지므로, 각각을 처리합니다.
+test_case = 1
+
+while True:
+    try:
+        line = input()
+    
+    except EOFError:
+        break
+    
+    a = int(line)
+    b = [list(input()) for row in range(8)]
+    
+    print(f"#{test_case} {main(a, b)}")
+    test_case += 1
