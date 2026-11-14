@@ -40,6 +40,7 @@ Returns:
     dict 자료 구조는 if not으로 있고 없고를 판단 불가
     ex) if not dict_[list_[i-1]]: 이러면 안 됨
     ex) if list_[i-1] not in dict_ 이런 식으로 해야 해당 키가 있는지 없는지 체크 가능
+    그리고 deque 쓸 필요가 없었음.. 어짜피 for문이 다 풀어서 넣고 있기 때문임
 """
 
 import sys
