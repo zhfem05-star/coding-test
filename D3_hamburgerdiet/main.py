@@ -32,11 +32,16 @@ Returns:
     return taste_score를 하기
     재귀문은 return max(dfs(), taste_score)
 
-의사코드:
-    남은 리스트, 목표 칼로리, 현재 칼로리, 맛 점수
-
-    for 문
-        dfs(list_tmp[1:], goal_cal, cur_cal + list_tmp[0][1], taste_score + list_tmp[0][0])
+회고:
+    백트래킹이 유독 약함. max로 비교해서 고르지 않았을 때와 골랐을 때를 모두 상정해서 구해야 함
+    이전에 부분 수열의 합의 경우 그냥 i + 1 로 해당 원소를 구했을 경우와 구하지 않았을 경우 모두 체크했는데
+    차이가 없는 방식임
+    이번에는 둘이 섞여서 내가 혼동함
+    애초에 dfs 처음부터 값을 계산한 다음 가지치는 방식이 처음으로 했던 방식
+    조건 먼저 판별하고 재귀 부분에서 값을 더해서 넘기는 방식이 이번 방식인데
+    둘 중 하나로 통일해서 푸는 체계화가 필요
+    문제 유형을 제대로 분류하고, 어떻게 풀어야할지 수식을 체계화하는 것이 중요할 듯
+    그리고 입출력은 꼼꼼히 읽자
 """
 # import math
 # print(math.comb(20, 5) * 20) #견적 내보기
@@ -46,7 +51,7 @@ import sys
 sys.stdin = open("./input.txt", "r")
 
 
-def dfs(list_: list, goal_cal: int, cur_cal: int, taste_score: int, answer: list) -> int:
+def dfs(list_: list, goal_cal: int, cur_cal: int, taste_score: int) -> int:
     if cur_cal > goal_cal:  # 목표 칼로리를 넘어섰다면
         return 0
 
@@ -55,10 +60,7 @@ def dfs(list_: list, goal_cal: int, cur_cal: int, taste_score: int, answer: list
     else:
         return taste_score
 
-    for i in range(len(list_tmp)):
-        answer.append(max(dfs(list_tmp[1:], goal_cal, cur_cal + list_tmp[0][1], taste_score + list_tmp[0][0], answer), taste_score))
-
-    return max(answer)
+    return max(dfs(list_tmp[1:], goal_cal, cur_cal + list_[0][1], taste_score + list_[0][0]), dfs(list_tmp[1:], goal_cal, cur_cal, taste_score))
 # def main(b: int, list_: list) -> int:
 #     answer = []
 #
@@ -69,6 +71,10 @@ def dfs(list_: list, goal_cal: int, cur_cal: int, taste_score: int, answer: list
 
 
 # 여러개의 테스트 케이스가 주어지므로, 각각을 처리합니다.
+T = input()
+
+test_case = 1
+
 while True:
     try:
         line = input()
@@ -76,11 +82,11 @@ while True:
     except EOFError:
         break
 
-    test_case = line
-    a, b = map(int, input().split())
+    a, b = map(int, line.split())
 
     list_ = [list(map(int, input().split())) for _ in range(a)]
 
-    answer = []
     # print(f"test_case: {test_case}, a, b: {a}, {b}\nlist_: {list_} ")
-    print(dfs(list_, b, 0, 0, answer))
+    print(f"#{test_case} {dfs(list_, b, 0, 0)}")
+
+    test_case += 1
